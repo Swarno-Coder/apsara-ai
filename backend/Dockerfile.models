@@ -1,0 +1,28 @@
+FROM python:3.11-slim
+
+# Install system dependencies for downloading
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install required Python packages for model downloading
+RUN pip install --no-cache-dir \
+    huggingface-hub \
+    requests \
+    tqdm
+
+# Copy model download script
+COPY download_models.py .
+
+# Create models directory
+RUN mkdir -p /app/models
+
+# Set executable permissions
+RUN chmod +x download_models.py
+
+# Default command
+CMD ["python", "download_models.py"]
